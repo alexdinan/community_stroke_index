@@ -21,14 +21,14 @@ app.post("/register", async (req, res) => {
 
     // check for missing fields
     if (!username || !password) {
-        return res.status(400).json({error: "Required fields are missing or empty"});
+        return res.status(400).json({ error: "Required fields are missing or empty" });
     }
 
     // check password strength
     const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=<>?{}\[\]~]).{8,}$/;
     if (!passwordRegex.test(password)) {
-        return res.status(400).json({error: "Password must be at least 8 characters long, include one " + 
-                                            "lowercase, one uppercase, one digit and one special character"});
+        return res.status(400).json({ error: "Password must be at least 8 characters long, include one " + 
+                                            "lowercase, one uppercase, one digit and one special character" });
     }
 
     try {
@@ -41,17 +41,17 @@ app.post("/register", async (req, res) => {
             [username, hashedPassword]
         );
 
-        res.status(200).json({message: "User created", id: rows[0].id});
+        res.status(200).json({ message: "User created", id: rows[0].id });
         
     } catch (err) {
         // check for username uniqueness violation
         if (err.code === "23505") {
-            return res.status(400).json({error: "Username already taken"});
+            return res.status(400).json({ error: "Username already taken" });
         }
 
         // server error
         console.error(err);
-        res.status(500).json({error: "Internal server error"});
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 
@@ -117,6 +117,9 @@ app.get("/courses", async (req, res) => {
         if (response.status === 401) {
             return res.status(401).json({ error: "External API quota exceeded or key is invalid/revoked" });
         }
+        if (response.status === 429) {
+            return res.status(429).json({ error: "External API quota exceeded" });
+        }
         if (!response.ok) {
             return res.status(response.status).json({ error: "External API error" });
         }
@@ -131,6 +134,42 @@ app.get("/courses", async (req, res) => {
 });
 
 
+app.get("/course/:id", async (req, res) => {
+    const { id } = req.params;
+
+    // id must be a positive integer
+    if (!/^\d+$/.test(id)) {
+        return res.status(400).json({ error: "Course id must be an integer"});
+    }
+
+    try {
+        const response = await fetch(
+            `${process.env.GOLF_API_URL}/courses/${id}`,
+            { headers: { Authorization: `Key ${process.env.GOLF_API_KEY}` } }
+        );
+
+        // handle external API errors
+        if (response.status === 401) {
+            return res.status(401).json({ error: "External API key is invalid/revoked" });
+        }
+        if (response.status === 429) {
+            return res.status(429).json({ error: "External API quota exceeded" });
+        }
+        if (response.status === 404) {
+            return res.status(404).json({ error: "No course with provided id exists"});
+        }
+        if (!response.ok) {
+            return res.status(response.status).json({ error: "External API error" });
+        }
+
+        const data = await response.json();
+        res.status(200).json(data);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
 
 
 
