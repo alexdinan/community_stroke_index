@@ -58,7 +58,7 @@ app.post("/register", async (req, res) => {
 
 app.post("/login", async (req, res) => {
     const { username, password } = req.body;
-
+    console.log(username);
     // check for missing fields
     if (!username || !password) {
         return res.status(400).json({ error: "Required fields are missing or empty" });
@@ -97,6 +97,38 @@ app.post("/login", async (req, res) => {
     }
 });
 
+
+app.get("/courses", async (req, res) => {
+    const search = req.query.search;
+
+    // check for missing fields
+    if (!search) {
+        return res.status(400).json({ error: "Required fields are missing or empty" });
+    }
+
+    try {
+        // make request to external API
+        const response = await fetch(
+            `${process.env.GOLF_API_URL}/search?search_query=${encodeURIComponent(search)}`,
+            { headers: { Authorization: `Key ${process.env.GOLF_API_KEY}` } }
+        );
+
+        // handle external API errors
+        if (response.status === 401) {
+            return res.status(401).json({ error: "External API quota exceeded or key is invalid/revoked" });
+        }
+        if (!response.ok) {
+            return res.status(response.status).json({ error: "External API error" });
+        }
+
+        const data = await response.json();
+        res.status(200).json(data);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
 
 
 
