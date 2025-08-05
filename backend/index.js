@@ -1,7 +1,9 @@
 import express from "express";
 import cors from "cors";
 import argon2 from "argon2";
+import jwt from "jsonwebtoken";
 import { pool } from "./db.js";
+
 
 
 // setup
@@ -15,7 +17,7 @@ app.use(express.json());
 // main logic
 
 app.post("/register", async (req, res) => {
-    const {username, password} = req.body;
+    const { username, password } = req.body;
 
     // check for missing fields
     if (!username || !password) {
@@ -50,6 +52,48 @@ app.post("/register", async (req, res) => {
         // server error
         console.error(err);
         res.status(500).json({error: "Internal server error"});
+    }
+});
+
+
+app.post("/login", async (req, res) => {
+    const { username, password } = req.body;
+
+    // check for missing fields
+    if (!username || !password) {
+        return res.status(400).json({ error: "Required fields are missing or empty" });
+    }
+
+    try {
+        // get user from database
+        const { rows } = await pool.query(
+            "SELECT id, password FROM users WHERE username = $1",
+            [username]
+        );
+
+        // username does not exist
+        if (rows.length === 0) {
+            return res.status(401).json({ error: "Invalid username or password" });
+        }
+
+        // check password matches
+        const validPassword = await argon2.verify(rows[0].password, password);
+        if (!validPassword) {
+            return res.status(401).json({ error: "Invalid username or password" });
+        }
+
+        // generate and sign JWT
+        const token = jwt.sign(
+            { id: rows[0].id, username },
+            process.env.JWT_SECRET,
+            { expiresIn: process.env.JWT_EXPIRY }
+        );
+
+        res.status(200).json({ message: "Login success", token });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 
