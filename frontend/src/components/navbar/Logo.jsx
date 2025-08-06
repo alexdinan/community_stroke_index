@@ -1,5 +1,3 @@
-// File: components/Logo.jsx
-import React from 'react';
 //import logoSrc from '../assets/logo.png'; // Update path as needed
 
 const Logo = () => (

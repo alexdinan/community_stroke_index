@@ -1,5 +1,5 @@
 // File: components/Navbar.jsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Logo from './Logo';
 import NavLinks from './NavLinks';
 import AuthButtons from './AuthButtons';

@@ -1,6 +1,3 @@
-// File: components/MobileMenu.jsx
-import React from 'react';
-
 
 const MobileMenu = ({ onLoginClick, onRegisterClick }) => {
     const links = ['Home', 'About', 'Services', 'Contact'];

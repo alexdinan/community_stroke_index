@@ -1,5 +1,3 @@
-// File: components/AuthButtons.jsx
-import React from 'react';
 
 const AuthButtons = ({ onRegisterClick, onLoginClick }) => (
     <div className="flex flex-col md:flex-row md:space-x-8 space-y-2 md:space-y-0">

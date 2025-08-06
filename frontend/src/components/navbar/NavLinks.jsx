@@ -1,5 +1,3 @@
-// File: components/NavLinks.jsx
-import React from 'react';
 
 const links = ['Home', 'About', 'Services', 'Contact'];
 
