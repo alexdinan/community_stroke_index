@@ -58,7 +58,7 @@ app.post("/register", async (req, res) => {
 
 app.post("/login", async (req, res) => {
     const { username, password } = req.body;
-    console.log(username);
+
     // check for missing fields
     if (!username || !password) {
         return res.status(400).json({ error: "Required fields are missing or empty" });
