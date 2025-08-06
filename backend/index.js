@@ -178,3 +178,6 @@ const PORT = 5555;
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`)
 });
+
+
+// TODO CLEAN UP ERROR HANDLING WITH EXTERNAL API!!!!!!!!!!!
