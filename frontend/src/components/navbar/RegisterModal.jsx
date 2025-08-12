@@ -1,6 +1,4 @@
-
 import { useState } from 'react';
-
 
 const RegisterModal = ({ onClose }) => {
   const [username, setUsername] = useState("");
