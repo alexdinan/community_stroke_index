@@ -42,9 +42,9 @@ const LoginModal = ({ onClose }) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start pt-[20vh] z-50">
-      <div className="bg-gray-900 text-red p-15 rounded shadow-lg w-full max-w-lg relative">
-        <h1 className="text-white text-9xl text-center mb-8">Login</h1>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex justify-center items-start pt-[20vh] z-50">
+      <div className="bg-white text-red p-15 rounded shadow-lg w-full max-w-lg relative">
+        <h1 className="text-black text-9xl text-center mb-8">Login</h1>
         <div className="pt-8 mt-8 space-y-6">
           <input
             type="text"

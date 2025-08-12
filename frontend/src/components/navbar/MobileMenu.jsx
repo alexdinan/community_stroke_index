@@ -3,7 +3,7 @@ const MobileMenu = ({ onLoginClick, onRegisterClick }) => {
     const links = ['Home', 'About', 'Services', 'Contact'];
   
     return (
-      <div className="md:hidden px-4 pt-4 pb-6 bg-gray-800">
+      <div className="md:hidden px-4 pt-4 pb-6 bg-gray-790 z-50 backdrop-blur-2xl">
         <div className="flex flex-col space-y-4">
           <div className="flex flex-col space-y-2">
             {links.map((link) => (
