@@ -42,35 +42,65 @@ const LoginModal = ({ onClose }) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex justify-center items-start pt-[20vh] z-50">
-      <div className="bg-white text-red p-15 rounded shadow-lg w-full max-w-lg relative">
-        <h1 className="text-black text-9xl text-center mb-8">Login</h1>
-        <div className="pt-8 mt-8 space-y-6">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50">
+      {/* Modal Container */}
+      <div className="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden">
+        
+        {/* Top Header Section */}
+        <div className="bg-gradient-to-b from-blue-600 to-blue-500 text-white px-6 py-3 relative flex justify-center items-center mb-6">
+          <h2 className="text-xl font-semibold">Login</h2>
+          <span
+            onClick={onClose}
+            className="absolute top-3 right-4 text-2xl hover:text-gray-200 cursor-pointer"
+          >
+            ×
+          </span>
+        </div>
+  
+        {/* Body Section */}
+        <div className="p-6 flex flex-col gap-4 mt-6">
           <input
             type="text"
             placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="mb-3 w-full px-4 py-3 rounded bg-white text-black focus:outline-none"
+            className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
           />
           <input
             type="password"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mb-3 w-full px-4 py-3 rounded bg-white text-black focus:outline-none"
+            className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
           />
-          <button
-            onClick={handleLogin}
-            className="w-full bg-black hover:bg-green-800 text-white px-4 py-3 rounded transition-colors"
-          >
-            Login
-          </button>
-          {message && <p className="text-white text-center mt-2 text-sm">{message}</p>}
+  
+          {/* Sign Up Button */}
+          <div className="flex justify-center">
+            <button
+              onClick={handleLogin}
+              className="custom-login-btn !bg-blue-600 hover:!bg-blue-700 text-white font-medium !rounded-full transition-colors w-[12ch] py-2 text-center"
+            >
+              Sign Up
+            </button>
+          </div>
+  
+  
+          {/* Message */}
+          {message && (
+            <div
+              className={`mt-2 text-center text-sm ${
+                message.toLowerCase().includes("success")
+                  ? "text-green-600"
+                  : "text-red-600"
+              }`}
+            >
+              {message}
+            </div>
+          )}
         </div>
       </div>
     </div>
-  );
+  );  
 };
 
 export default LoginModal;
