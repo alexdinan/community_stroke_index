@@ -25,7 +25,7 @@ app.post("/register", async (req, res) => {
     }
 
     // check password strength
-    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=<>?{}\[\]~]).{8,}$/;
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!.@#$%^&*()_\-+=<>?{}\[\]~]).{8,}$/;
     if (!passwordRegex.test(password)) {
         return res.status(400).json({ error: "Password must be at least 8 characters long, include one " + 
                                             "lowercase, one uppercase, one digit and one special character" });

@@ -50,3 +50,10 @@ h1 {
     background-color: #f9f9f9;
   }
 }
+
+
+
+.leaflet-container {
+  height: 100vh;
+  z-index: 1;
+}
