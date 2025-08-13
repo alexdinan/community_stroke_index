@@ -9,8 +9,9 @@ export default function CourseCard({ course }) {
         onClick={() => setCurrentCourse(course)}
         className={`border p-4 cursor-pointer transition-shadow hover:shadow-lg ${isSelected ? "border-blue-500 bg-blue-50" : "border-gray-300"}`}
       >
-        <h3 className="text-lg font-semibold">{course.name}</h3>
-        <p className="text-sm text-gray-600">{course.address}</p>
+        <h3 className="text-lg font-semibold">{course.club_name}</h3>
+        <p className="text-sm text-gray-600">{course.course_name}</p>
+        <p className="text-sm text-gray-600">{course.location.address}, {course.location.country}</p>
 
         {isSelected && (
           <div className="mt-3 flex gap-2">

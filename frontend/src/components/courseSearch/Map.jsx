@@ -24,21 +24,25 @@ function MapContent({ courses, currentCourse }) {
 
   return (
     <MarkerClusterGroup>
-      {courses.map(course => (
+      {courses.map(course => {
+        if (!course.location.latitude || !course.location.longitude) {
+            return;
+        }
+        return (
         <Marker
           key={course.id}
-          position={course.geocode}
+          position={[parseFloat(course.location.latitude), parseFloat(course.location.longitude)]}
           icon={customIcon}
           ref={el => {
             if (el) markerRefs.current[course.id] = el;
           }}
         >
           <Popup>
-            <h2>{course.name}</h2>
-            <p>{course.id}, {course.address}</p>
+            <h2>{course.course_name}</h2>
+            <p>{course.id}, {course.location.address}</p>
           </Popup>
         </Marker>
-      ))}
+      )})}
     </MarkerClusterGroup>
   );
 }

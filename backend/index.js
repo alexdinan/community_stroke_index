@@ -125,6 +125,7 @@ app.get("/courses", async (req, res) => {
         }
 
         const data = await response.json();
+        console.log(data);
         res.status(200).json(data);
 
     } catch (err) {
@@ -181,3 +182,5 @@ app.listen(PORT, () => {
 
 
 // TODO CLEAN UP ERROR HANDLING WITH EXTERNAL API!!!!!!!!!!!
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
