@@ -54,6 +54,6 @@ h1 {
 
 
 .leaflet-container {
-  height: 80vh;
+  height: 50vh;
   z-index: 1;
 }

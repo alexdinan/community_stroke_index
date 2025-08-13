@@ -1,13 +1,13 @@
 import Navbar from "./components/navbar/Navbar";
 import HeroSection from "./components/HeroSection";
-import Map from "./components/courseSearch/Map";
+import CourseSearch from "./components/courseSearch/CourseSearch";
 
 function App() {
   return (
     <>
       <Navbar/>
       <HeroSection/>
-      <Map></Map>
+      <CourseSearch/>
       <HeroSection/>
     </>
   )
