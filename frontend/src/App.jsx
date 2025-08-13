@@ -8,6 +8,7 @@ function App() {
       <Navbar/>
       <HeroSection/>
       <Map></Map>
+      <HeroSection/>
     </>
   )
 }

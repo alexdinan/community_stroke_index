@@ -1,5 +1,6 @@
-import { MapContainer, TileLayer, Marker } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup,  } from "react-leaflet";
 import { Icon } from "leaflet";
+import MarkerClusterGroup from "react-leaflet-markercluster";
 import "leaflet/dist/leaflet.css";
 import "../../index.css";
 
@@ -29,16 +30,19 @@ export default function Map() {
 
 
     return (
-        <MapContainer center={[0.505, -0.09]} zoom={3}>
-            <TileLayer
-                url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-
-            {markers.map(marker => (
-                <Marker position={marker.geocode} icon={customIcon}>
-
-                </Marker>
-            ))}
-        </MapContainer>
+        <div>
+            <MapContainer center={[0.505, -0.09]} zoom={3}>
+                <TileLayer
+                    url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                <MarkerClusterGroup>
+                    {markers.map(marker => (
+                        <Marker position={marker.geocode} icon={customIcon}>
+                            <Popup><h2>Hello, I am {marker.popup}</h2></Popup>
+                        </Marker>
+                    ))}
+                </MarkerClusterGroup>
+            </MapContainer>
+        </div>
     );
 };
