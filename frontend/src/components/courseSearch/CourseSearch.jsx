@@ -40,28 +40,35 @@ export default function CourseSearch() {
     };
 
 
-    return (
-        <div className="flex h-screen">
-            <div className="w-full md:w-1/3 flex flex-col border-r border-gray-200">
-                <SearchBar onSearch={handleSearch} />
+    return (   
+        <div className="h-screen w-screen bg-gray-200 flex flex-col justify-center items-center">
+            {/* Title */}
+            <h1 className="text-5xl font-extrabold text-blue-600 mb-6 text-center">
+                Find a Course
+            </h1>
 
-                {/* Display success / error message */}
-                {message && (
-                <div
-                    className={`px-4 py-2 text-sm border-b border-gray-200 ${
-                    message.includes("Success")
-                        ? "text-green-700 bg-gray-100"
-                        : "text-red-700 bg-gray-100"
-                    }`}
-                >
-                    {message}
+            <div className="flex h-4/5 w-14/15 my-6">
+                <div className="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 flex flex-col border-r border-gray-100 bg-white">
+                    <SearchBar onSearch={handleSearch} />
+
+                    {/* Display success / error message */}
+                    {message && (
+                    <div
+                        className={`px-4 py-2 text-sm border-b border-gray-200 ${
+                        message.includes("Success")
+                            ? "text-green-700 bg-gray-100"
+                            : "text-red-700 bg-gray-100"
+                        }`}
+                    >
+                        {message}
+                    </div>
+                    )}
+
+                    <CourseList courses={courses}/>
                 </div>
-                )}
-
-                <CourseList courses={courses}/>
-            </div>
-            <div className="hidden md:flex flex-1 justify-center items-center">
-                <Map courses={courses}/>
+                <div className="hidden md:flex flex-1 justify-center items-center">
+                    <Map courses={courses}/>
+                </div>
             </div>
         </div>
     );

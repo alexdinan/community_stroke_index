@@ -36,12 +36,12 @@ const HeroSection_ = () => {
 
 const HeroSection = () => {
   return (
-    <div className="bg-gradient-to-b from-gray-900 to-emerald-300 w-screen min-h-screen flex items-center justify-start px-6 py-16">
+    <div className="bg-gradient-to-r from-blue-900 to-blue-200 w-screen min-h-screen flex items-center justify-start px-6 py-16">
       <div className="w-full md:ml-[10%] md:w-1/3 text-left">
         <h1 className="text-5xl md:text-6xl font-bold text-white leading-tight mb-6">
           Perfect Your Swing on Pristine Greens
         </h1>
-        <p className="text-lg md:text-xl text-emerald-200">
+        <p className="text-lg md:text-xl text-white mt-6 pt-6">
           Discover world-class golf courses, expert tips, and gear to elevate your game.
         </p>
       </div>
