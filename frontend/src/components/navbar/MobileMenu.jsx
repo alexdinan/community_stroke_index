@@ -13,16 +13,16 @@ const MobileMenu = ({ onLoginClick, onRegisterClick }) => {
                 className="relative text-white px-3 py-2 text-base font-medium group w-fit"
               >
                 <span className="relative z-10">{link}</span>
-                <span className="absolute left-0 bottom-0 h-0.5 bg-green-700 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" style={{ width: '100%' }} />
-                <span className="absolute left-0 top-0 h-0.5 bg-green-700 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" style={{ width: '100%' }} />
+                <span className="absolute left-0 bottom-0 h-0.5 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" style={{ width: '100%' }} />
+                <span className="absolute left-0 top-0 h-0.5 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" style={{ width: '100%' }} />
               </a>
             ))}
           </div>
           <div className="flex space-x-2">
-            <button onClick={onRegisterClick} className="mx-2 w-1/2 bg-white text-gray-900 px-3 py-2 rounded overflow-hidden transition-colors duration-500 hover:text-white hover:bg-gradient-to-r from-green-700 to-green-800">
+            <button onClick={onRegisterClick} className="mx-2 w-1/2 bg-white text-black px-3 py-2 rounded overflow-hidden">
               Sign Up
             </button>
-            <button onClick={onLoginClick} className="mx-2 w-1/2 bg-white text-gray-900 px-3 py-2 rounded overflow-hidden transition-colors duration-500 hover:text-white hover:bg-gradient-to-r from-green-700 to-green-800">
+            <button onClick={onLoginClick} className="mx-2 w-1/2 bg-white text-black px-3 py-2 rounded overflow-hidden">
               Login
             </button>
           </div>
