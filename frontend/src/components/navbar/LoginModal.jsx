@@ -80,7 +80,7 @@ const LoginModal = ({ onClose }) => {
               onClick={handleLogin}
               className="custom-login-btn !bg-blue-600 hover:!bg-blue-700 text-white font-medium !rounded-full transition-colors w-[12ch] py-2 text-center"
             >
-              Sign Up
+              Login
             </button>
           </div>
   

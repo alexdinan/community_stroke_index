@@ -38,10 +38,12 @@ export default function Map({ courses = [] }) {
 
   return (
     <MapContainer
-      center={[0.105, -0.09]}
+      center={[40.105, -0.09]}
       zoom={2}
       minZoom={2}
       style={{ height: "100%", width: "100%" }}
+      maxBounds={[[-100.505, -160.09], [103.505, 190.09]]}         // <-- restrict panning
+      maxBoundsViscosity={1.0}       // <-- optional, prevents overscroll
     >
       <TileLayer url="https://tiles.stadiamaps.com/tiles/stamen_terrain/{z}/{x}/{y}{r}.jpg" />
       <MapContent courses={courses} setCurrentCourse={setCurrentCourse} />
