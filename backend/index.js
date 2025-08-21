@@ -13,11 +13,44 @@ app.use(cors()); // change once frontend path is known SECURITY
 app.use(express.json());
 
 
+// middleware to authenticate JWT
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  if (!token) return res.status(401).json({ error: "Token missing" });
 
-// main logic
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) return res.status(403).json({ error: "Invalid or expired token" });
+    req.user = user;
+    next();
+  });
+}
+
+
+// reusable fetch logic from external API
+async function fetchFromGolfAPI(endpoint, errorMessages={}) {
+    try {
+        const response = await fetch(
+            `${process.env.GOLF_API_URL}${endpoint}`,
+            { headers: { Authorization: `Key ${process.env.GOLF_API_KEY}` } }
+        );
+
+        if (!response.ok) {
+            const msg = errorMessages[response.status] || "External API error";
+            throw { status: response.status, message: msg };
+        }
+
+        return await response.json();
+    } catch (err) {
+        if (err.status && err.message) throw err;
+        console.error(err);
+        throw { status: 500, message: "Internal server error" };
+    }
+}
+
 
 app.post("/register", async (req, res) => {
-    const { username, password } = req.body;
+    const { username, password } = req.body || {};
 
     // check for missing fields
     if (!username || !password) {
@@ -57,7 +90,7 @@ app.post("/register", async (req, res) => {
 
 
 app.post("/login", async (req, res) => {
-    const { username, password } = req.body;
+    const { username, password } = req.body || {};
 
     // check for missing fields
     if (!username || !password) {
@@ -99,7 +132,7 @@ app.post("/login", async (req, res) => {
 
 
 app.get("/courses", async (req, res) => {
-    const search = req.query.search;
+    const { search } = req.query;
 
     // check for missing fields
     if (!search) {
@@ -107,30 +140,16 @@ app.get("/courses", async (req, res) => {
     }
 
     try {
-        // make request to external API
-        const response = await fetch(
-            `${process.env.GOLF_API_URL}/search?search_query=${encodeURIComponent(search)}`,
-            { headers: { Authorization: `Key ${process.env.GOLF_API_KEY}` } }
+        const data = await fetchFromGolfAPI(
+            `/search?search_query=${encodeURIComponent(search)}`,
+            {
+                401: "External API key is invalid/revoked",
+                429: "External API quota exceeded",
+            }
         );
-
-        // handle external API errors
-        if (response.status === 401) {
-            return res.status(401).json({ error: "External API quota exceeded or key is invalid/revoked" });
-        }
-        if (response.status === 429) {
-            return res.status(429).json({ error: "External API quota exceeded" });
-        }
-        if (!response.ok) {
-            return res.status(response.status).json({ error: "External API error" });
-        }
-
-        const data = await response.json();
-        console.log(data);
         res.status(200).json(data);
-
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Internal server error" });
+        res.status(err.status).json({ error: err.message });
     }
 });
 
@@ -144,34 +163,118 @@ app.get("/course/:id", async (req, res) => {
     }
 
     try {
-        const response = await fetch(
-            `${process.env.GOLF_API_URL}/courses/${id}`,
-            { headers: { Authorization: `Key ${process.env.GOLF_API_KEY}` } }
-        );
-
-        // handle external API errors
-        if (response.status === 401) {
-            return res.status(401).json({ error: "External API key is invalid/revoked" });
-        }
-        if (response.status === 429) {
-            return res.status(429).json({ error: "External API quota exceeded" });
-        }
-        if (response.status === 404) {
-            return res.status(404).json({ error: "No course with provided id exists"});
-        }
-        if (!response.ok) {
-            return res.status(response.status).json({ error: "External API error" });
-        }
-
-        const data = await response.json();
+        const data = await fetchFromGolfAPI(`/courses/${id}`, {
+            401: "External API key is invalid/revoked",
+            429: "External API quota exceeded",
+            404: "No course with provided id exists",
+        });
         res.status(200).json(data);
 
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Internal server error" });
+        res.status(err.status).json({ error: err.message });
     }
 });
 
+
+app.post("/assignment", authenticateToken, async (req, res) => {
+    const { courseId, teeGender, teeName, assignment } = req.body || {};
+    const userId = req.user.id;
+
+    // check for missing fields
+    if (!courseId || !teeGender || !teeName || !assignment) {
+        return res.status(400).json({error: "Required fields are missing or empty"});
+    }
+    // ensure tee gender is valid
+    if (teeGender != "male" && teeGender != "female") {
+        return res.status(400).json({error: "Tee gender must be either male or female"});
+    }
+
+    try {
+        // fetch course details from external API
+        const courseData = await fetchFromGolfAPI(`/courses/${courseId}`, {
+            401: "External API key is invalid/revoked",
+            404: "No course with provided id exists",
+            429: "External API quota exceeded",
+        });
+
+        // ensure tee name exists
+        const teesForGender = courseData.course.tees[teeGender];
+        const selectedTee = teesForGender?.find(tee => tee.tee_name === teeName);
+        if (!selectedTee) {
+            return res.status(400).json({ error: `Tee '${teeName}' not found for gender '${teeGender}'` });
+        }
+        
+        // check validity of stroke index assignments
+        if (!Array.isArray(assignment) || assignment.length === 0) {
+            return res.status(400).json({ error: "Assignment must be a non-empty array" });
+        }
+        const numHoles = selectedTee.holes.length;
+
+        // validate strokeIndex values
+        const strokeIndexes = assignment.map(a => a.strokeIndex);
+        if (!strokeIndexes.every(idx => Number.isInteger(idx))) {
+            return res.status(400).json({ error: "All strokeIndex values must be integers" });
+        }
+        if (!strokeIndexes.every(idx => idx >= 1 && idx <= numHoles)) {
+            return res.status(400).json({ error: `All strokeIndex values must be between 1 and ${numHoles}` });
+        }
+        const uniqueStrokeIndexes = new Set(strokeIndexes);
+        if (uniqueStrokeIndexes.size !== numHoles) {
+            return res.status(400).json({ error: `Assigned strokeIndexes must be unique and cover 1 to ${numHoles}` });
+        }
+
+        // Validate holeNumber values
+        const holeNumbers = assignment.map(a => a.holeNumber);
+        if (!holeNumbers.every(h => Number.isInteger(h))) {
+            return res.status(400).json({ error: "All holeNumber values must be integers" });
+        }
+        if (!holeNumbers.every(h => h >= 1 && h <= numHoles)) {
+            return res.status(400).json({ error: `All holeNumber values must be between 1 and ${numHoles}` });
+        }
+        const uniqueHoles = new Set(holeNumbers);
+        if (uniqueHoles.size !== numHoles) {
+            return res.status(400).json({ error: `holeNumber values must be unique and cover 1 to ${numHoles}` });
+        }
+
+    } catch (err) {
+        return res.status(err.status || 500).json({ error: err.message });
+    }
+
+    let client;
+    try {
+        client = await pool.connect();
+        await client.query("BEGIN");
+
+        // insert into assignments relation
+        const { rows } = await client.query(
+            `INSERT INTO stroke_index_assignments (user_id, course_id, tee_gender, tee_name)
+            VALUES ($1, $2, $3, $4) RETURNING id`,
+            [userId, courseId, teeGender, teeName]
+        );
+        const assignmentId = rows[0].id;
+
+        // insert each S.I value
+        const insertPromises = assignment.map(ass =>
+            client.query(
+                `INSERT INTO stroke_index_values (assignment_id, hole_number, stroke_index)
+                VALUES ($1, $2, $3)`,
+                [assignmentId, ass.holeNumber, ass.strokeIndex]
+            )
+        );
+        await Promise.all(insertPromises);
+
+        // commit databse changes - atomicity
+        await client.query("COMMIT");
+        res.status(200).json({ message: "Assignment saved", assignmentId });
+
+    } catch (err) {
+        if (client) await client.query("ROLLBACK");
+        console.error(err);
+        res.status(500).json({ error: "Database error: Failed to save assignment" });
+    } finally {
+        if (client) client.release();
+    }
+});
 
 
 // run server
@@ -179,8 +282,3 @@ const PORT = 5555;
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`)
 });
-
-
-// TODO CLEAN UP ERROR HANDLING WITH EXTERNAL API!!!!!!!!!!!
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
