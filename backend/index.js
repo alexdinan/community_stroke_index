@@ -4,11 +4,8 @@ import argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import { pool } from "./db.js";
 
-
-
 // setup
 const app = express();
-
 app.use(cors()); // change once frontend path is known SECURITY
 app.use(express.json());
 
@@ -169,7 +166,6 @@ app.get("/course/:id", async (req, res) => {
             404: "No course with provided id exists",
         });
         res.status(200).json(data);
-
     } catch (err) {
         res.status(err.status).json({ error: err.message });
     }
@@ -204,7 +200,7 @@ app.post("/assignment", authenticateToken, async (req, res) => {
             return res.status(400).json({ error: `Tee '${teeName}' not found for gender '${teeGender}'` });
         }
         
-        // check validity of stroke index assignments
+        // check validity of assignments list
         if (!Array.isArray(assignment) || assignment.length === 0) {
             return res.status(400).json({ error: "Assignment must be a non-empty array" });
         }

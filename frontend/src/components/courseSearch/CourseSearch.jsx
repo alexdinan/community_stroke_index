@@ -41,7 +41,7 @@ export default function CourseSearch() {
 
 
     return (   
-        <div className="h-screen w-screen bg-gray-200 flex flex-col justify-center items-center">
+        <div className="h-screen w-screen bg-gray-200 flex flex-col justify-center items-center pb-8">
             {/* Title */}
             <h1 className="text-5xl font-extrabold text-blue-600 mb-6 text-center">
                 Find a Course
