@@ -1,7 +1,7 @@
 import { useCourseContext } from "../../contexts/CourseContext";
 
 
-export default function ControlPanel({ teeGender, setTeeGender, teeName, setTeeName }) {
+export default function ControlPanel({ teeGender, setTeeGender, teeName, setTeeName, setAssignment }) {
     const { currentCourse } = useCourseContext();
 
     // get options for dropdown menus
@@ -29,6 +29,16 @@ export default function ControlPanel({ teeGender, setTeeGender, teeName, setTeeN
                         }
                     </span>
                     <p>{currentCourse ? `${currentCourse.location.country} - ${currentCourse.location.city}` : ""}</p>
+
+                    <button
+                        onClick={() => {
+                        const el = document.getElementById("course_search_title");
+                        if (el) {
+                            el.scrollIntoView({ behavior: "smooth" });
+                        }}}
+                        className="inline-block bg-blue-600 text-white px-2 py-1 rounded shadow hover:bg-blue-700 transition">
+                        Change Course
+                    </button>
                 </div>
 
                 {/* Tee Gender Dropdown */}
@@ -38,7 +48,8 @@ export default function ControlPanel({ teeGender, setTeeGender, teeName, setTeeN
                         value={teeGender || ""}
                         onChange={(e) => {
                             setTeeGender(e.target.value);
-                            setTeeName(""); // reset tee name when gender changes
+                            setTeeName("");
+                            setAssignment([]);
                         }}
                         className="border rounded-lg p-2"
                     >
@@ -56,7 +67,10 @@ export default function ControlPanel({ teeGender, setTeeGender, teeName, setTeeN
                     <h4 className="font-bold pb-1">Tee Name:</h4>
                     <select
                         value={teeName || ""}
-                        onChange={(e) => setTeeName(e.target.value)}
+                        onChange={(e) => {
+                            setTeeName(e.target.value);
+                            setAssignment([]);
+                        }}
                         className="border rounded-lg p-2"
                         disabled={!teeGender}
                     >

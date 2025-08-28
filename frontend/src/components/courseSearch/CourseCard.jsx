@@ -15,24 +15,25 @@ export default function CourseCard({ course }) {
 
         {isSelected && (
           <div className="mt-3 flex gap-2">
-            <a
-              href="#"
-              target=""
-              rel="noopener noreferrer"
-              className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
-              onClick={(e) => e.stopPropagation()}
-            >
-            Add data
-            </a>
-            <a
-              href="#"
-              target=""
-              rel="noopener noreferrer"
-              className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm"
-              onClick={(e) => e.stopPropagation()}
-            >
-            View Data
-            </a>
+            <button
+              onClick={() => {
+                const el = document.getElementById("add_data_title");
+                if (el) {
+                  el.scrollIntoView({ behavior: "smooth" });
+                }}}
+              className="inline-block bg-blue-600 text-white px-3 py-1 rounded shadow hover:bg-blue-700 transition text-sm">
+              Add Data
+            </button>
+            
+            <button
+              onClick={() => {
+                const el = document.getElementById("view_data_title");
+                if (el) {
+                  el.scrollIntoView({ behavior: "smooth" });
+                }}}
+              className="inline-block bg-green-600 text-white px-3 py-1 rounded shadow hover:bg-green-700 transition text-sm">
+              Add Data
+            </button>
           </div>
         )}
       </div>

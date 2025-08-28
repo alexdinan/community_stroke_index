@@ -43,7 +43,7 @@ export default function CourseSearch() {
     return (   
         <div className="h-screen w-screen bg-gray-200 flex flex-col justify-center items-center pb-8">
             {/* Title */}
-            <h1 className="text-5xl font-extrabold text-blue-600 mb-6 text-center">
+            <h1 id="course_search_title" className="text-5xl font-extrabold text-blue-600 mb-6 text-center">
                 Find a Course
             </h1>
 
@@ -66,7 +66,7 @@ export default function CourseSearch() {
 
                     <CourseList courses={courses}/>
                 </div>
-                <div className="hidden md:flex flex-1 justify-center items-center">
+                <div className="hidden md:flex flex-1 justify-center items-center z-0">
                     <Map courses={courses}/>
                 </div>
             </div>

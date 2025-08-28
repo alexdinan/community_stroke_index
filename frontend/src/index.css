@@ -53,8 +53,7 @@ h1 {
 }
 
 
-
-.leaflet-container {
-  height: 50vh;
-  z-index: 1;
+.slick-prev:before,
+.slick-next:before {
+  color: rgb(44, 68, 207) !important;
 }
